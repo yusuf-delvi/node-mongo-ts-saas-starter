@@ -1,0 +1,41 @@
+name: Deploy Preprod
+
+on:
+  push:
+    branches:
+      - preprod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Copy Files to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.PREPROD_EC2_HOST }}
+          username: ${{ secrets.PREPROD_EC2_USER }}
+          key: ${{ secrets.PREPROD_SSH_PRIVATE_KEY }}
+          source: './'
+          overwrite: true
+          target: '/home/ubuntu/apps/node-mongo-ts-saas-starter'
+
+      - name: SSH into EC2 and Restart Application
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PREPROD_EC2_HOST }}
+          username: ${{ secrets.PREPROD_EC2_USER }}
+          key: ${{ secrets.PREPROD_SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/apps/node-mongo-ts-saas-starter
+            pm2 reload ecosystem.config.js --update-env
+            pm2 save
