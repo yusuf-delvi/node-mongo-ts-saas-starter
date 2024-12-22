@@ -13,7 +13,6 @@ export async function getUserData(user: User) {
 		'email',
 		'isEmailVerified',
 		'profilePicUrl',
-		'profession',
 		'isGuideCompleted',
 		'authType',
 	]);
