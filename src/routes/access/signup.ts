@@ -19,7 +19,6 @@ import { createTokens } from '../../auth/authUtils';
 import { googleClient as GoogleClientConfig } from '../../config/index';
 import Stripe from 'stripe';
 import { stripeAccount } from '../../config/index';
-import { Types } from 'mongoose';
 
 const googleClient = new OAuth2Client(GoogleClientConfig.clientId);
 
@@ -70,11 +69,10 @@ router.post(
 
 		await sendMail(
 			userData.email ?? '',
-			"Your PersonaChat's One-Time Password (OTP)",
+			"Your One-Time Password (OTP)",
 			`<h1>Your one time password</h1><br><p style="font-size: 24px;">Dear ${
 				userData.name
-			},<br><br> Your OTP is: <h1><b>${otp.toString()}</b></h1><br><br>If you have any questions, just drop us a mail at info@personachat.com and you can reach out in our Discord channel <a href="https://discord.gg/y987q8rm">Discord</a>, we are always happy to help you out<br><br>Best regards <br>Team Personachat</p>`,
-			'otp',
+			},<br><br> Your OTP is: <h1><b>${otp.toString()}</b></h1>`,
 		);
 
 		new SuccessResponse(
